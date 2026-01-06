@@ -190,7 +190,7 @@ function Products() {
   },[currentProductPage,dispatch]);
 
   return (
-    <div>
+    <div className="space-y-6">
       <Admin_Product_List 
           products={products} 
           setFormData={setFormData}
@@ -228,37 +228,48 @@ function Products() {
           })
           }
         }>
-          <SheetContent side='right' className='w-screen overflow-auto'>
+          <SheetContent side='right' className='w-full sm:w-[600px] lg:w-[700px] overflow-y-auto bg-gradient-to-b from-white to-gray-50'>
           {
             productUploading 
             ?
-              <div className='h-[calc(100vh-120px)] w-full flex justify-center items-center flex-col gap-2' >
-                <LoaderIcon className='animate-spin' />
-                <span className='text-gray-500'>{currentEditedID === null ? "Product is being added to your store" : "Product is being edited"}</span>
+              <div className='h-[calc(100vh-120px)] w-full flex justify-center items-center flex-col gap-4' >
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center">
+                  <LoaderIcon className='w-8 h-8 text-white animate-spin' />
+                </div>
+                <div className="text-center">
+                  <p className='text-lg font-semibold text-gray-900'>
+                    {currentEditedID === null ? "Adding Product..." : "Updating Product..."}
+                  </p>
+                  <p className='text-sm text-gray-500 mt-1'>
+                    {currentEditedID === null ? "Please wait while we add your product to the store" : "Please wait while we update your product details"}
+                  </p>
+                </div>
               </div>
             :
             <>
-            <SheetHeader>
-              <SheetTitle>{`${currentEditedID !== null ? "Update Product Details" : "Add New Product"}`}</SheetTitle>
-              <SheetDescription>{`${currentEditedID !== null 
-                ? 
-                "Keep your inventory fresh!" 
-                : 
-                "Add new items to your inventory with ease!"}`
-              }
+            <SheetHeader className="pb-6 border-b border-gray-200">
+              <SheetTitle className="text-2xl font-bold text-gray-900">
+                {currentEditedID !== null ? "Update Product" : "Add New Product"}
+              </SheetTitle>
+              <SheetDescription className="text-gray-600 mt-2">
+                {currentEditedID !== null 
+                  ? "Update your product details and keep your inventory fresh!" 
+                  : "Add new items to your inventory with ease. Fill in all the required fields below."}
               </SheetDescription>
             </SheetHeader>
-            <Image_Uploader 
-              image1={image1} 
-              setImage1={setImage1}
-              image2={image2}
-              setImage2={setImage2}
-              image3={image3}
-              setImage3={setImage3}
-              image4={image4}
-              setImage4={setImage4}
-              toBeEdited={currentEditedID !== null}/>
-            <div className='py-6'>
+            <div className="py-6 space-y-6">
+              <Image_Uploader 
+                image1={image1} 
+                setImage1={setImage1}
+                image2={image2}
+                setImage2={setImage2}
+                image3={image3}
+                setImage3={setImage3}
+                image4={image4}
+                setImage4={setImage4}
+                toBeEdited={currentEditedID !== null}
+              />
+              <div className='bg-white rounded-xl p-6 border border-gray-200 shadow-sm'>
                 <Form
                   FormTemplate={NewProductFormTemplate}
                   FormData={formData}
@@ -268,6 +279,7 @@ function Products() {
                   isSubmitDisabled={!isFormValid()}
                   formType="SizeForm"
                 />
+              </div>
             </div>
             </>
         }

@@ -164,12 +164,18 @@ const getSalesAnalytics = async(req,res) => {
           })
           )
           
+          // Handle empty results
+          const overviewData = overview[0] || { totalRevenue: 0, averageOrderValue: 0 };
+          const discountData = discountAmount[0] || { total: 0, totalQuantity: 1 };
+          
           res.status(200).json({
             success : true,
-            totalRevenue : overview[0].totalRevenue,
-            revenuePerItem : (overview[0].totalRevenue / discountAmount[0].totalQuantity).toFixed(2),
-            averageOrderValue : overview[0].averageOrderValue,
-            discountTotal : (discountAmount[0].total).toFixed(2),
+            totalRevenue : overviewData.totalRevenue,
+            revenuePerItem : discountData.totalQuantity > 0 
+              ? (overviewData.totalRevenue / discountData.totalQuantity).toFixed(2) 
+              : "0.00",
+            averageOrderValue : overviewData.averageOrderValue,
+            discountTotal : discountData.total.toFixed(2),
             revenuePerCategory,
             RevenueTrendData : RevenueTrendData.reverse()
           })

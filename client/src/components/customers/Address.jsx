@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { AddressFormTemplate } from "../../config/config"
 import Address_Tile from "./Address_Tile"
 import Form from "../utility/Form"
@@ -135,39 +134,65 @@ function Address({setSelectedAddress,selectedId}) {
     },[])
 
   return (
-    <Card>
-        <div className="mb-5 p-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2">
-            {
-                addressList && addressList.length > 0 &&
-                addressList.map((item,index) => 
-                    <Address_Tile key={index} 
-                        handleAddressDelete={handleAddressDelete} 
-                        handleAddressEdit={handleAddressEdit}
-                        setSelectedAddress={setSelectedAddress} 
-                        address={item}
-                        selectedId={selectedId}
-                    />
-                )
-            }
+    <div className="space-y-6">
+      {/* Existing Addresses */}
+      {addressList && addressList.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Delivery Address</h3>
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+            {addressList.map((item,index) => (
+              <Address_Tile 
+                key={index} 
+                handleAddressDelete={handleAddressDelete} 
+                handleAddressEdit={handleAddressEdit}
+                setSelectedAddress={setSelectedAddress} 
+                address={item}
+                selectedId={selectedId}
+              />
+            ))}
+          </div>
         </div>
-        <CardHeader className={currentEditedAddressId === null ? "" : "flex flex-row justify-between items-center"}>
-            <CardTitle>{currentEditedAddressId === null ? "Add New Address" : "Edit Address" }</CardTitle>
-            {currentEditedAddressId !== null && <Button onClick={() => {
-                setCurrentEditedAddressId(null);
-                setFormData(AddressInitialFormData);
-            }} >Reset</Button>}
-        </CardHeader>
-        <CardContent className="space-y-3">
-            <Form 
-                FormTemplate={AddressFormTemplate}
-                FormData={formData}
-                setFormData={setFormData}
-                onSubmit={onSubmit}
-                isSubmitDisabled={!isFormValid()}
-                EventName={currentEditedAddressId === null ? "Add Address" : "Edit Address"}
-            />
-        </CardContent>
-    </Card>
+      )}
+
+      {/* Add/Edit Address Form */}
+      <div className="bg-gray-50 rounded-xl p-6 border-2 border-dashed border-gray-300">
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-bold text-gray-900">
+              {currentEditedAddressId === null ? "Add New Address" : "Edit Address"}
+            </h3>
+            {currentEditedAddressId !== null && (
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setCurrentEditedAddressId(null);
+                  setFormData(AddressInitialFormData);
+                }}
+                className="hover:bg-gray-100"
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+          <p className="text-sm text-gray-600">
+            {currentEditedAddressId === null 
+              ? "Add a new delivery address to your account"
+              : "Update your address information"
+            }
+          </p>
+        </div>
+        <div>
+          <Form 
+            FormTemplate={AddressFormTemplate}
+            FormData={formData}
+            setFormData={setFormData}
+            onSubmit={onSubmit}
+            isSubmitDisabled={!isFormValid()}
+            EventName={currentEditedAddressId === null ? "Add Address" : "Update Address"}
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 

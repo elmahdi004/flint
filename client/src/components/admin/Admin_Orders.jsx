@@ -83,126 +83,151 @@ const handleRemoveOrder = async (orderId) => {
 };
 
   return (
-    <Card>
-        <CardHeader className="flex flex-row justify-between items-center">
-            <CardTitle>All Orders</CardTitle>
-            <div>
-                <Label>Order Status</Label>
-                <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value)} >
-                    <SelectTrigger className='w-full'>
-                        <SelectValue placeholder="All"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem key="available" value="All">
-                                All
-                        </SelectItem>
-                        {
-                            Object.keys(OrderStatusColor).map((item) => 
-                                <SelectItem key={item} value={item}>
-                                    {item}
-                                </SelectItem>
-                            )
-                        }
-                    </SelectContent>
-                </Select>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Order Management</h1>
+          <p className="text-gray-600">View and manage all customer orders</p>
+        </div>
+        <div className="w-full sm:w-auto">
+          <Label className="text-sm font-semibold text-gray-700 mb-2 block">Filter by Status</Label>
+          <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value)}>
+            <SelectTrigger className='w-full sm:w-[200px] border-2'>
+              <SelectValue placeholder="All Orders"/>
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="All">All Orders</SelectItem>
+              {Object.keys(OrderStatusColor).map((item) => 
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Orders Table */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+        {orderList && orderList.length > 0 ? (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50 hover:bg-gray-50">
+                  <TableHead className="text-center font-semibold text-gray-700">Items</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Order ID</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Date</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                  <TableHead className="text-right font-semibold text-gray-700">Amount</TableHead>
+                  <TableHead className="text-center font-semibold text-gray-700">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {orderList.map((order,index) => (
+                  <TableRow key={index} className="hover:bg-gray-50 transition-colors">
+                    <TableCell className="p-4">
+                      <div className='relative flex justify-center items-center'>
+                        {order.OrderItems.slice(0,3).map((orderitem,idx) => (
+                          <div
+                            key={idx}
+                            style={{zIndex : 3 - idx, marginLeft: idx !== 0 ? '-12px' : '0'}}
+                            className="relative"
+                          >
+                            <img 
+                              src={orderitem.Image[0]} 
+                              className="bg-white w-12 h-12 rounded-full border-2 border-white shadow-md object-cover" 
+                              alt={`Item ${idx + 1}`}
+                            />
+                            {idx === 2 && order.OrderItems.length > 3 && (
+                              <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                +{order.OrderItems.length - 3}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono text-sm text-gray-600 font-medium">
+                        {order?._id.slice(-8).toUpperCase()}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-gray-700">
+                        {new Date(order?.OrderCreationDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`px-3 py-1.5 text-sm font-semibold ${orderColorMapper(order.OrderStatus)} text-white`}>
+                        {order.OrderStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-right">
+                        <span className="text-lg font-bold text-gray-900">{order.OrderTotal} MAD</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2 justify-center items-center">
+                        <Button 
+                          variant="outline"
+                          className="hover:bg-blue-50 hover:border-blue-300"
+                          onClick={() => {
+                            setAdminSelectedOrder(order);
+                            setOpenDetailDialog(true);
+                          }}
+                        >
+                          View Details
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="hover:bg-red-50 hover:border-red-300"
+                          onClick={() => handleRemoveOrder(order._id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <div className='w-full mt-6 flex justify-center'>
+              <Paginator
+                currentPage={currentOrderPage}
+                setCurrentPage={setCurrentOrderPage}
+                pageCount={pageCount}
+              />
             </div>
-        </CardHeader>
-        <CardContent>
-            {
-                orderList && orderList.length > 0 
-                ?
-                <div className="
-                max-[400px]:w-[19rem]
-                max-[420px]:w-[20rem]
-                max-[470px]:w-[21rem]
-                max-[500px]:w-[23rem]
-                max-[520px]:w-[26rem]
-                max-[550px]:w-[27rem]
-                max-[600px]:w-[30rem]
-                max-[620px]:w-[31rem]
-                max-[650px]:w-[34rem]
-                max-[700px]:w-[36rem]
-                max-[720px]:w-[37rem]
-                max-[750px]:w-[41rem]
-                max-[785px]:w-[43rem]
-                ">
-                    <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="text-center">Order</TableHead>
-                                    <TableHead className="w-[100px]">Order ID</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Amount</TableHead>
-                                    <TableHead className="text-center">Action</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {
-                                    orderList.map((order,index) => 
-                                        <TableRow key={index} className="h-5">
-                                            <TableCell className="p-0">
-                                                <div className='relative flex justify-center'>
-                                                    {
-                                                        order.OrderItems.slice(0,3).map((orderitem,index) => 
-                                                                <img style={{zIndex : 3 - index }} src={orderitem.Image[0]} className={`bg-white w-10 h-10 rounded-full border border-gray-300 shadow-md ${
-                                                                    index !== 0 ? '-ml-4' : ''
-                                                                } `} />
-                                                        )
-                                                    }
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="font-medium">{order?._id}</TableCell>
-                                            <TableCell>{order?.OrderCreationDate.split('T')[0]}</TableCell>
-                                            <TableCell>
-                                                <Badge className={
-                                                    `px-3 py-1 ${orderColorMapper(order.OrderStatus)}`
-                                                }>
-                                                    {order.OrderStatus}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right">{order.OrderTotal} MAD</TableCell>
-                                            <TableCell className="flex justify-center">
-                                                <Button key={index} variant="" onClick={() => {
-                                                    setAdminSelectedOrder(order);
-                                                    setOpenDetailDialog(true);
-                                                    }} >View Details</Button>
-                                                     <Button
-                                                variant="destructive"
-                                                onClick={() => handleRemoveOrder(order._id)}
-                                            >
-                                                <Trash2 className="w-4 h-4" /> {/* Add a trash icon */}
-                                            </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                }
-                            </TableBody>
-                    </Table>
-                    <div className='w-full mt-5'>
-                        <Paginator
-                            currentPage={currentOrderPage}
-                            setCurrentPage={setCurrentOrderPage}
-                            pageCount={pageCount}
-                        />
-                    </div>
-                </div>
-                :
-                <div className="flex mt-3 flex-col h-full items-center justify-center gap-1 text-center">
-                    <PackageOpen className='w-16 h-16 text-gray-600'/>
-                    <h2 className="text-2xl font-semibold text-gray-700 mb-2">No Orders Found</h2>
-                    <p className="max-w-80 text-gray-500 mb-6">It looks like there are no orders in this status. Check back later to find any orders.</p>
-                </div>
-            }
-       
-            {
-                adminSelectedOrder !== null && 
-                <Dialog open={openDetailDialog} onOpenChange={setOpenDetailDialog}>
-                    <Admin_Order_Detail order={adminSelectedOrder} setOpenDetailDialog={setOpenDetailDialog} />
-                </Dialog>
-            }
-        </CardContent>
-    </Card>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+              <PackageOpen className='w-12 h-12 text-gray-400'/>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No Orders Found</h2>
+            <p className="max-w-md text-gray-600">
+              {filterStatus === "All" 
+                ? "You don't have any orders yet. Orders will appear here once customers start placing them."
+                : `No orders found with status "${filterStatus}". Try selecting a different status.`
+              }
+            </p>
+          </div>
+        )}
+
+        {adminSelectedOrder !== null && 
+          <Dialog open={openDetailDialog} onOpenChange={setOpenDetailDialog}>
+            <Admin_Order_Detail order={adminSelectedOrder} setOpenDetailDialog={setOpenDetailDialog} />
+          </Dialog>
+        }
+      </div>
+    </div>
   )
 }
 

@@ -67,7 +67,7 @@ const BannerSlice = createSlice({
         })
         .addCase(handleFetchBanners.fulfilled,(state,action) => {
             state.isLoading = false;
-            state.bannerList = action.payload?.banners
+            state.bannerList = action.payload?.banners || [];
         })
         .addCase(handleFetchBanners.rejected,(state,action) => {
             state.isLoading = false;

@@ -35,25 +35,37 @@ function Signup() {
   }
 
   return (
-    <div className='mx-auto w-full max-w-md space-y-1'>
-      <h1 className='text-3xl font-bold tracking-tight text-foreground-primary'>
-          Welcome to <span className='font-stick-no-bills text-4xl font-bold'>FLINT
-            <span className='text-red-400 text-5xl'>.</span>
-          </span></h1>
-      <h1 className='text-1xl font-semibold text-slate-600'>Create your new account and explore Flint</h1>
-      <br />
-      <Form FormTemplate={SignupFormTemplate}
-            FormData={formData}
-            setFormData={setFormData}
-            onSubmit={onSubmit}
-            EventName="Sign Up"
-      >
-      </Form>
-      <h1 className='text-center'>Already have an account? 
-            <NavLink to="/auth/login" className="text-violet-700 font-semibold">
-                &nbsp;Login
-            </NavLink>
-      </h1>
+    <div className='w-full space-y-8'>
+      <div className='text-center space-y-2'>
+        <h1 className='text-4xl md:text-5xl font-bold tracking-tight text-gray-900'>
+          Join{' '}
+          <span className='font-stick-no-bills text-4xl font-bold gradient-text'>
+            FLINT<span className='text-red-500 text-5xl'>.</span>
+          </span>
+        </h1>
+        <p className='text-lg text-gray-600'>
+          Create your new account and explore our premium collection
+        </p>
+      </div>
+      
+      <div className='bg-white rounded-2xl shadow-xl border border-gray-200 p-8'>
+        <Form 
+          FormTemplate={SignupFormTemplate}
+          FormData={formData}
+          setFormData={setFormData}
+          onSubmit={onSubmit}
+          EventName="Sign Up"
+        />
+      </div>
+      
+      <div className='text-center'>
+        <p className='text-gray-600'>
+          Already have an account?{' '}
+          <NavLink to="/auth/login" className="text-red-500 font-semibold hover:text-red-600 transition-colors">
+            Login
+          </NavLink>
+        </p>
+      </div>
     </div>
   )
 }

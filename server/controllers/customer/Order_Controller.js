@@ -35,6 +35,11 @@ const createOrder = async (req, res) => {
 
         await newOrder.save();
 
+        // Clear the cart after order is created (for Cash on Delivery)
+        if (cartId) {
+            await Cart.findByIdAndDelete(cartId);
+        }
+
         // Prepare the order data for the email
         const orderData = {
             userId, // Client's user ID
@@ -50,6 +55,7 @@ const createOrder = async (req, res) => {
         res.status(200).json({
             success: true,
             orderId: newOrder._id,
+            message: 'Order created successfully and cart cleared'
         });
     } catch (e) {
         console.log(e);

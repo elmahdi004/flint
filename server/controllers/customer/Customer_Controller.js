@@ -6,7 +6,9 @@ const getProducts = async(req,res) => {
     const brand = req.query.Brand;
     const sortId = req.query.sort;
 
-    const {page = 1, pageLimit = 10} = req.query;
+    // Parse page and pageLimit as integers with defaults
+    const page = parseInt(req.query.page) || 1;
+    const pageLimit = parseInt(req.query.pageLimit) || 10;
 
     let filterQuery = {} ;
     let sortQuery = {};

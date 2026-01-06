@@ -84,57 +84,95 @@ function Catalog() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 p-4 md:grid-cols-[250px_1fr] lg:grid-cols-[300px_1fr]">
-      <SearchFilter filter={filter} handleFilter={handleFilter} />
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
+          {/* Filter Sidebar */}
+          <aside className="lg:sticky lg:top-24 lg:h-fit">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200">Filters</h3>
+              <SearchFilter filter={filter} handleFilter={handleFilter} />
+            </div>
+          </aside>
 
-      <div className="bg-white w-full rounded-lg shadow-md p-4">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b pb-2 mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">All Products</h2>
-          <div className="flex items-center gap-3">
-            {/* Sort Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-2">
-                  <ArrowUpDown className="h-5 w-5" />
-                  <span>Sort by</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
-                  {SortOptions.map((item) => (
-                    <DropdownMenuRadioItem key={item.id} value={item.id}>
-                      {item.label}
-                    </DropdownMenuRadioItem>
+          {/* Products Section */}
+          <div className="w-full">
+            {/* Header */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-200">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-1">All Products</h1>
+                  <p className="text-gray-600 text-sm">
+                    {products?.length || 0} {products?.length === 1 ? 'product' : 'products'} found
+                  </p>
+                </div>
+                {/* Sort Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2 border-2 hover:bg-gray-50">
+                      <ArrowUpDown className="h-4 w-4" />
+                      <span className="font-medium">Sort by</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[220px] bg-white shadow-xl border border-gray-200">
+                    <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
+                      {SortOptions.map((item) => (
+                        <DropdownMenuRadioItem 
+                          key={item.id} 
+                          value={item.id}
+                          className="cursor-pointer hover:bg-gray-50"
+                        >
+                          {item.label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            {/* Products Grid */}
+            {products && products.length > 0 ? (
+              <>
+                <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {products.map((product, index) => (
+                    <Customer_ProductCard key={index} product={product} />
                   ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </div>
+                {/* Pagination */}
+                {pageCount !== 0 && (
+                  <div className="mt-8 flex justify-center">
+                    <Paginator currentPage={currentPage} setCurrentPage={setCurrentPage} pageCount={pageCount} />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-lg p-12 border border-gray-200">
+                <div className="flex flex-col items-center justify-center gap-6 text-center">
+                  <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center">
+                    <RadarIcon className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">No Products Available</h2>
+                    <p className="text-gray-600 max-w-md">
+                      It looks like there are no products matching your filters. Try adjusting your search criteria or explore other categories.
+                    </p>
+                  </div>
+                  <Button 
+                    variant="default" 
+                    className="mt-4 bg-red-500 hover:bg-red-600"
+                    onClick={() => {
+                      setFilter({});
+                      sessionStorage.removeItem("filter");
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Products Grid */}
-        {products && products.length > 0 ? (
-          <div className="grid gap-4 p-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {products.map((product, index) => (
-              <div key={index} className="w-full">
-                <Customer_ProductCard product={product} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center gap-4 text-center p-10">
-            <RadarIcon className="w-16 h-16 text-gray-500" />
-            <h2 className="text-2xl font-semibold text-gray-700">No Products Available</h2>
-            <p className="text-gray-500 max-w-lg">
-              It looks like there are no products in this category. Check back later or explore other categories.
-            </p>
-            <Button variant="default" className="mt-4">Browse Categories</Button>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {pageCount !== 0 && <Paginator currentPage={currentPage} setCurrentPage={setCurrentPage} pageCount={pageCount} />}
       </div>
     </div>
   );

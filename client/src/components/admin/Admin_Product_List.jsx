@@ -59,244 +59,291 @@ function Admin_Product_List({
   const [filterData,setFilterData] = useState(initialState);
 
   return (
-    <Card>
-        <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                    <h3 className="text-2xl font-semibold leading-none tracking-tight">Your Products</h3>
-                    <div className="hidden sm:flex mt-1 gap-2">
-                        <div className="flex items-center text-sm pr-2 border border-blue-800 rounded-full">
-                            <span className="font-medium px-2 py-1 bg-blue-100 text-blue-800 rounded-full">Category</span>
-                            <span className="ml-1"> {`${productCategory === "" ? "All" : productCategory}`}</span>
-                        </div>
-                        <div className="flex items-center text-sm pr-2 border border-green-800 rounded-full">
-                            <span className="font-medium px-2 py-1 bg-green-100 text-green-800 rounded-full">Brand</span>
-                            <span className="ml-1">{`${productBrand === "" ? "All" : productBrand}`}</span>
-                        </div>
-                        <div className="flex items-center text-sm pr-2 border border-yellow-800 rounded-full">
-                            <span className="font-medium px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Stock</span>
-                            <span className="ml-1">{`${productStock=== "" ? "Available" : productStock}`}</span>
-                        </div>
-                    </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Product Management</h1>
+          <p className="text-gray-600">Manage your product inventory efficiently</p>
+        </div>
+        <Button 
+          onClick={() => setProductOpeningDrawer(true)} 
+          className='flex gap-2 items-center bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white shadow-lg'
+        >
+          <Plus className="w-5 h-5"/>
+          <span className="font-semibold">Add Product</span>
+        </Button>
+      </div>
+
+      {/* Filters and Stats */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+          <div className="flex flex-wrap gap-3">
+            {productCategory && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full border border-blue-200">
+                <span className="text-xs font-semibold">Category:</span>
+                <span className="text-sm font-medium">{productCategory}</span>
+              </div>
+            )}
+            {productBrand && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-700 rounded-full border border-green-200">
+                <span className="text-xs font-semibold">Brand:</span>
+                <span className="text-sm font-medium">{productBrand}</span>
+              </div>
+            )}
+            {productStock && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-full border border-yellow-200">
+                <span className="text-xs font-semibold">Stock:</span>
+                <span className="text-sm font-medium">{productStock}</span>
+              </div>
+            )}
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2 border-2 hover:bg-gray-50">
+                <ArrowUpDown className="w-4 h-4" />
+                <span className="font-medium">Filters</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[240px] bg-white shadow-xl border border-gray-200 p-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">Category</Label>
+                  <Select value={filterData.Category} onValueChange={(value) => setFilterData((prevData) => ({
+                    ...prevData,
+                    Category : value
+                  }))}>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder="Select Category"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FilterOptions.Category.map(opt => 
+                        <SelectItem key={opt.id} value={opt.label}>
+                          {opt.label}
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="flex gap-2">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="border border-gray-500 flex items-center px-2 justify-evenly gap-1">
-                            <ArrowUpDown className="w-4 h-5" />
-                            <span>Filter</span>
-                        </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="flex flex-col gap-2 w-[200px]">
-                            <div className="flex flex-col gap-1">
-                                <Label>Category</Label>
-                                <Select value={filterData.Category} onValueChange={(value) => setFilterData((prevData) => {
-                                    return {
-                                        ...prevData,
-                                        Category : value
-                                    }
-                                })}>
-                                <SelectTrigger className='w-full'>
-                                    <SelectValue placeholder="Category"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {
-                                        FilterOptions.Category.map(opt => 
-                                        <SelectItem key={opt.id} value={opt.label}>
-                                                {opt.label}
-                                        </SelectItem>)
-                                    }
-                                </SelectContent>
-                                </Select>
-                            </div>
-                            <Separator />
-                            <div className="flex flex-col gap-1">
-                                <Label>Brand</Label>
-                                <Select value={filterData.Brand} onValueChange={(value) => setFilterData((prevData) => {
-                                    return {
-                                        ...prevData,
-                                        Brand : value
-                                    }
-                                })}>
-                                <SelectTrigger className='w-full'>
-                                    <SelectValue placeholder="Brand"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {
-                                        FilterOptions.Brand.map(opt => 
-                                        <SelectItem key={opt.id} value={opt.label}>
-                                                {opt.label}
-                                        </SelectItem>)
-                                    }
-                                </SelectContent>
-                                </Select>
-                            </div>
-                            <Separator />
-                            <div className="flex flex-col gap-1">
-                                <Label>Stock</Label>
-                                <Select value={filterData.Stock} onValueChange={(value) => setFilterData((prevData) => {
-                                    return {
-                                        ...prevData,
-                                        Stock : value
-                                    }
-                                })}>
-                                <SelectTrigger className='w-full'>
-                                    <SelectValue placeholder="Stock"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem key="available" value="Available">
-                                            Available
-                                    </SelectItem>
-                                    <SelectItem key="available" value="Out of Stock">
-                                            Out of Stock
-                                    </SelectItem>
-                                </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="flex justify-center gap-1">
-                            <DropdownMenuItem><Button onClick={() => handleFetchProductList(filterData)}>Apply</Button></DropdownMenuItem>
-                            <DropdownMenuItem><Button onClick={() => {setFilterData(initialState);handleFetchProductList(initialState)}}>Reset</Button></DropdownMenuItem>
-                            </div>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button onClick={() => setProductOpeningDrawer(true)} className='flex gap-1 px-2 items-center justify-center'>
-                        <Plus color="white" size={20}/>
-                        Add Product
-                    </Button>
+                <Separator />
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">Brand</Label>
+                  <Select value={filterData.Brand} onValueChange={(value) => setFilterData((prevData) => ({
+                    ...prevData,
+                    Brand : value
+                  }))}>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder="Select Brand"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FilterOptions.Brand.map(opt => 
+                        <SelectItem key={opt.id} value={opt.label}>
+                          {opt.label}
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
-            </CardTitle>
-            <CardDescription>Manage your product inventory efficiently. Add, edit, or remove products.</CardDescription>
-        </CardHeader>
-        <CardContent>
+                <Separator />
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">Stock Status</Label>
+                  <Select value={filterData.Stock} onValueChange={(value) => setFilterData((prevData) => ({
+                    ...prevData,
+                    Stock : value
+                  }))}>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder="Select Stock"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Available">Available</SelectItem>
+                      <SelectItem value="Out of Stock">Out of Stock</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Button 
+                    onClick={() => handleFetchProductList(filterData)} 
+                    className="flex-1 bg-red-500 hover:bg-red-600"
+                  >
+                    Apply
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {setFilterData(initialState);handleFetchProductList(initialState)}} 
+                    className="flex-1"
+                  >
+                    Reset
+                  </Button>
+                </div>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {/* Products Table */}
         {
-            products && products.length > 0
-            ?
-            <div className="
-            max-[400px]:w-[19rem]
-            max-[420px]:w-[20rem]
-            max-[450px]:w-[21rem]
-            max-[500px]:w-[23rem]
-            max-[520px]:w-[26rem]
-            max-[550px]:w-[28rem]
-            max-[595px]:w-[30rem]
-            ">
-                <Table>
+          products && products.length > 0 ? (
+            <div className="overflow-x-auto">
+              <Table>
                 <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[100px]">Product</TableHead>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Brand</TableHead>
-                        <TableHead className="text-right">Price</TableHead>
-                        <TableHead className="text-center">Actions</TableHead>
-                    </TableRow>
+                  <TableRow className="bg-gray-50 hover:bg-gray-50">
+                    <TableHead className="w-[100px] font-semibold text-gray-700">Image</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Product</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Category</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Brand</TableHead>
+                    <TableHead className="text-right font-semibold text-gray-700">Price</TableHead>
+                    <TableHead className="text-center font-semibold text-gray-700">Actions</TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {
-                        products.map((product,index) => 
-                            <TableRow key={index} className="h-5">
-                                <TableCell>
-                                    <img
-                                    width={50}
-                                    src={product?.Image[0]}
-                                    />
-                                </TableCell>
-                                <TableCell>{product?.Title}</TableCell>
-                                <TableCell>
-                                    {product?.Category}
-                                </TableCell>
-                                <TableCell>
-                                    {product?.Brand}
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex h-full items-center justify-end">
-                                    {
-                                        product.SalePrice > 0
-                                        ?
-                                        <div className='flex items-end'>
-                                            <span className="text-[17px]">{product.SalePrice} MAD</span>
-                                            <span className='text-xs text-gray-500 line-through'>{product.Price} MAD</span>
-                                        </div>
-                                        :
-                                        <span>{product.Price} MAD</span>
-                                    }
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex gap-2 justify-evenly items-center'>
-                                        <Button variant="outline" size="icon" onClick={() => {
-                                            setProductOpeningDrawer(true);
-                                            setCurrentEditedID(product?._id);
-                                            setFormData({
-                                                title : product.Title,
-                                                description : product.Description,
-                                                category : product.Category,
-                                                brand : product.Brand,
-                                                price : product.Price,
-                                                salePrice : product?.SalePrice,
-                                                featured : product?.Featured,
-                                                sizes : product?.Size,
-                                            });
-                                        }}>
-                                            <Ellipsis className='w-4 h-4 text-green-600'/>
-                                        </Button>
-                                        <Button variant="outline" size="icon" onClick={() => {setOrderToBeDeleted(product);setOpenDeleteDialog(true);}}>
-                                            <Trash2 className='w-4 h-4 text-red-400'/>
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        )
-                    }
-                </TableBody>
-                </Table>
-                 <div className="mt-5 flex w-full justify-center">
-                    <Paginator
-                        currentPage={currentProductPage}
-                        setCurrentPage={setCurrentProductPage}
-                        pageCount={pageCount}
-                    />
-                </div> 
-            </div>  
-            :
-            <div className="flex mt-3 flex-col h-full items-center justify-center gap-1 text-center">
-                <RadarIcon className='w-16 h-16 text-gray-600'/>
-                <h2 className="text-2xl font-semibold text-gray-700 mb-2">No Products Available</h2>
-                <p className="max-w-80 text-gray-500 mb-6">It looks like there are no products in this category or brand. Add more products by clicking on <span onClick={() => setProductOpeningDrawer(true)} className="underline font-semibold cursor-pointer">Add New Product</span></p>
-            </div>
-        }
-
-        {
-            orderToBeDeleted !== null && 
-            <Dialog open={openDeleteDialogDialog} onOpenChange={setOpenDeleteDialog}>
-                <DialogContent className="flex flex-col gap-1">
-                    <DialogTitle>Are you absolutely sure,</DialogTitle>
-                    <span className='text-gray-600'>You want to delete the following product from your inventory</span>
-                    <div className='mt-4 flex justify-start gap-5'>
-                        <img className='w-28 h-auto' src={orderToBeDeleted?.Image[0]} />
-                        <div className='flex flex-col gap-1'>
-                            <span className='font-semibold'>{orderToBeDeleted?.Title}</span>
-                            <div className="flex flex-col space-y-2">
-                                <div className="border-l-4 border-blue-300 pl-2">
-                                    <span className="text-sm font-semibold text-gray-700">Category</span>
-                                    <p className="text-sm text-gray-600">{orderToBeDeleted?.Category}</p>
-                                </div>
-                                <div className="border-l-4 border-green-400 pl-2">
-                                    <span className="text-sm font-semibold text-gray-700">Brand</span>
-                                    <p className="text-sm text-gray-600">{orderToBeDeleted?.Brand}</p>
-                                </div>
-                            </div>
+                  {products.map((product,index) => (
+                    <TableRow key={index} className="hover:bg-gray-50 transition-colors">
+                      <TableCell>
+                        <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-gray-200">
+                          <img
+                            className="w-full h-full object-cover"
+                            src={product?.Image[0]}
+                            alt={product?.Title}
+                          />
                         </div>
-                    </div>
-                    <Button className="w-full mt-4 tracking-wider bg-red-500 border border-red-800" onClick={() => handleProductDelete(orderToBeDeleted?._id)}>
-                        DELETE
-                    </Button>
-                </DialogContent>
-            </Dialog>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-semibold text-gray-900">{product?.Title}</div>
+                        {product?.Featured === "Yes" && (
+                          <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full mt-1 inline-block">
+                            Featured
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                          {product?.Category}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                          {product?.Brand}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex h-full items-center justify-end">
+                          {product.SalePrice > 0 ? (
+                            <div className='flex flex-col items-end'>
+                              <span className="text-lg font-bold text-red-600">{product.SalePrice} MAD</span>
+                              <span className='text-xs text-gray-400 line-through'>{product.Price} MAD</span>
+                            </div>
+                          ) : (
+                            <span className="text-lg font-semibold text-gray-900">{product.Price} MAD</span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className='flex gap-2 justify-center items-center'>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="hover:bg-green-50 hover:border-green-300"
+                            onClick={() => {
+                              setProductOpeningDrawer(true);
+                              setCurrentEditedID(product?._id);
+                              setFormData({
+                                title : product.Title,
+                                description : product.Description,
+                                category : product.Category,
+                                brand : product.Brand,
+                                price : product.Price,
+                                salePrice : product?.SalePrice,
+                                featured : product?.Featured,
+                                sizes : product?.Size,
+                              });
+                            }}
+                          >
+                            <Ellipsis className='w-4 h-4 text-green-600'/>
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="icon"
+                            className="hover:bg-red-50 hover:border-red-300"
+                            onClick={() => {setOrderToBeDeleted(product);setOpenDeleteDialog(true);}}
+                          >
+                            <Trash2 className='w-4 h-4 text-red-500'/>
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <div className="mt-6 flex w-full justify-center">
+                <Paginator
+                  currentPage={currentProductPage}
+                  setCurrentPage={setCurrentProductPage}
+                  pageCount={pageCount}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                <RadarIcon className='w-12 h-12 text-gray-400'/>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">No Products Found</h2>
+              <p className="max-w-md text-gray-600 mb-6">
+                It looks like there are no products matching your filters. Try adjusting your filters or add a new product.
+              </p>
+              <Button 
+                onClick={() => setProductOpeningDrawer(true)}
+                className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+              >
+                <Plus className="w-4 h-4 mr-2"/>
+                Add Your First Product
+              </Button>
+            </div>
+          )
         }
-        </CardContent>
-    </Card>
 
+        {orderToBeDeleted !== null && 
+          <Dialog open={openDeleteDialogDialog} onOpenChange={setOpenDeleteDialog}>
+            <DialogContent className="bg-white rounded-2xl shadow-2xl border border-gray-200 max-w-md">
+              <DialogTitle className="text-2xl font-bold text-gray-900 mb-2">Delete Product?</DialogTitle>
+              <p className='text-gray-600 mb-6'>Are you sure you want to delete this product? This action cannot be undone.</p>
+              <div className='flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 mb-6'>
+                <div className="w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-300 flex-shrink-0">
+                  <img className='w-full h-full object-cover' src={orderToBeDeleted?.Image[0]} alt={orderToBeDeleted?.Title} />
+                </div>
+                <div className='flex flex-col gap-2 flex-1'>
+                  <span className='font-bold text-gray-900 text-lg'>{orderToBeDeleted?.Title}</span>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-gray-500">Category:</span>
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium">{orderToBeDeleted?.Category}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-gray-500">Brand:</span>
+                      <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">{orderToBeDeleted?.Brand}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline" 
+                  className="flex-1 border-2" 
+                  onClick={() => setOpenDeleteDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold" 
+                  onClick={() => handleProductDelete(orderToBeDeleted?._id)}
+                >
+                  Delete Product
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        }
+      </div>
+    </div>
   )
 }
 

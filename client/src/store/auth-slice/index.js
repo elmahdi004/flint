@@ -9,7 +9,11 @@ const initialState = {
 
 export const userSignup = createAsyncThunk('/auth/signup',
     async(formData) => {
-        const res = await axios.post(`${import.meta.env.VITE_SERVER_BASE_URL}/api/auth/signup`,formData,{
+        const BASE = import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:5000';
+        console.log('[auth] VITE_SERVER_BASE_URL =>', import.meta.env.VITE_SERVER_BASE_URL);
+        const url = `${BASE}/api/auth/signup`;
+        console.log('[auth] signup URL =>', url, 'payload =>', formData);
+        const res = await axios.post(url, formData, {
             withCredentials : true
         });
         return res.data;
@@ -18,7 +22,11 @@ export const userSignup = createAsyncThunk('/auth/signup',
 
 export const userLogin = createAsyncThunk('/auth/login',
     async(formData) => {
-        const res = await axios.post(`${import.meta.env.VITE_SERVER_BASE_URL}/api/auth/login`,formData,{
+        const BASE = import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:5000';
+        console.log('[auth] VITE_SERVER_BASE_URL =>', import.meta.env.VITE_SERVER_BASE_URL);
+        const url = `${BASE}/api/auth/login`;
+        console.log('[auth] login URL =>', url, 'payload =>', formData);
+        const res = await axios.post(url, formData, {
             withCredentials : true
         });
         return res.data;
@@ -27,7 +35,11 @@ export const userLogin = createAsyncThunk('/auth/login',
 
 export const verifyAuth = createAsyncThunk('/auth/verifyAuth',
     async(token) => {
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_BASE_URL}/api/auth/verifyAuth`,{
+        const BASE = import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:5000';
+        console.log('[auth] VITE_SERVER_BASE_URL =>', import.meta.env.VITE_SERVER_BASE_URL);
+        const url = `${BASE}/api/auth/verifyAuth`;
+        console.log('[auth] verifyAuth URL =>', url, 'token =>', !!token);
+        const res = await axios.get(url,{
             withCredentials : true,
             headers : {
             Authorization : `Bearer ${token}`,

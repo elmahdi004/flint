@@ -102,8 +102,8 @@ const CustomerProductSlice = createSlice({
         })
         .addCase(fetchFeaturedandLatest.fulfilled,(state,action) => {
             state.isLoading = false;
-            state.featuredProducts = action.payload?.featuredProducts;
-            state.latestProducts = action.payload?.latestProducts;
+            state.featuredProducts = action.payload?.featuredProducts || [];
+            state.latestProducts = action.payload?.latestProducts || [];
         })
         .addCase(fetchFeaturedandLatest.rejected,(state,action) => {
             state.isLoading = false;

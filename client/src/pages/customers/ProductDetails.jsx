@@ -219,159 +219,225 @@ function ProductDetails() {
   }
 
   return (
-    <div className="flex flex-col gap-20">
-      <div className="pt-5 flex justify-center">
-        <div className="w-[80%] flex justify-center gap-5 flex-col sm:flex-row">
-          <div className="flex-1 flex flex-col-reverse gap-4 sm:flex-row">
-            <div className="flex sm:flex-col overflow-x-auto justify-evenly sm:justify-normal sm:w-[18.7%] w-full">
+    <div className="flex flex-col gap-16 bg-gradient-to-b from-white to-gray-50 min-h-screen">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 pt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Image Gallery */}
+          <div className="flex flex-col-reverse gap-4 sm:flex-row lg:flex-col-reverse">
+            {/* Thumbnail Images */}
+            <div className="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-x-visible sm:w-20 lg:w-full lg:flex-row">
               {displayProduct?.Image.map((item, index) => (
-                <img
-                  src={item}
+                <button
                   key={index}
                   onClick={() => setDisplayImage(item)}
-                  className={`${item === displayImage ? "border border-gray-300" : ""} w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer`}
-                />
+                  className={`${item === displayImage ? "ring-2 ring-red-500 ring-offset-2" : "opacity-60 hover:opacity-100"} 
+                    flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 border-gray-200 transition-all duration-200`}
+                >
+                  <img
+                    src={item}
+                    alt={`Product view ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
               ))}
             </div>
-            <div className="w-full sm:w-[80%]">
-              <img className="w-full h-auto" src={displayImage} />
+            {/* Main Image */}
+            <div className="flex-1 bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200">
+              <img 
+                className="w-full h-auto object-contain" 
+                src={displayImage} 
+                alt={displayProduct.Title}
+              />
             </div>
           </div>
-          <div className="flex-1">
-            <h1 className="font-medium text-3xl mt-2">{displayProduct.Title}</h1>
-            <div className="flex my-3 gap-2">
-              <span className="bg-blue-100 border border-blue-700 px-3 rounded-full">{displayProduct?.Category}</span>
-              <span className="bg-green-100 border border-green-700 px-3 rounded-full">{displayProduct?.Brand}</span>
-            </div>
-            {productRating && (
-              <div className="mt-2 flex items-center gap-1">
-                <div className="flex items-center">
-                  <StarRating rating={productRating} isEditable={false} />
-                </div>
-                <span className="text-gray-500">{`(${productRating.toFixed(2)})`}</span>
+
+          {/* Product Info */}
+          <div className="flex flex-col">
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border border-gray-200">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{displayProduct.Title}</h1>
+              
+              {/* Category & Brand Tags */}
+              <div className="flex flex-wrap gap-3 mb-4">
+                <span className="px-4 py-1.5 bg-blue-100 text-blue-700 border border-blue-300 rounded-full text-sm font-semibold">
+                  {displayProduct?.Category}
+                </span>
+                <span className="px-4 py-1.5 bg-green-100 text-green-700 border border-green-300 rounded-full text-sm font-semibold">
+                  {displayProduct?.Brand}
+                </span>
               </div>
-            )}
-            <div className="mt-2 text-2xl font-medium">
-              {displayProduct.SalePrice ? (
-                <div className="flex items-end gap-1">
-                  <span>{displayProduct.SalePrice} MAD</span>
-                  <span className="text-base line-through">{displayProduct.Price} MAD</span>
+
+              {/* Rating */}
+              {productRating && (
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center">
+                    <StarRating rating={productRating} isEditable={false} />
+                  </div>
+                  <span className="text-gray-600 font-medium">{productRating.toFixed(2)}</span>
+                  <span className="text-gray-400">({reviewList?.length || 0} reviews)</span>
+                </div>
+              )}
+
+              {/* Price */}
+              <div className="mb-6">
+                {displayProduct.SalePrice ? (
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-bold text-red-600">{displayProduct.SalePrice} MAD</span>
+                    <span className="text-xl line-through text-gray-400">{displayProduct.Price} MAD</span>
+                    <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold">
+                      {Math.round(((displayProduct.Price - displayProduct.SalePrice) / displayProduct.Price) * 100)}% OFF
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-4xl font-bold text-gray-900">{displayProduct.Price} MAD</span>
+                )}
+              </div>
+
+              {/* Description */}
+              <p className="text-gray-700 leading-relaxed mb-6 text-base">{displayProduct.Description}</p>
+
+              {/* Size Selection */}
+              {displaySizes.length > 0 ? (
+                <div className="flex flex-col gap-3 mb-6">
+                  <p className="font-semibold text-gray-900 text-lg">Select Size</p>
+                  <div className="flex flex-wrap gap-3">
+                    {displaySizes.map((item, index) => (
+                      <button
+                        onClick={() => setSize(item.size)}
+                        key={index}
+                        className={`${size === item.size 
+                          ? "bg-red-500 text-white border-red-600 shadow-lg scale-105" 
+                          : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"} 
+                          border-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 min-w-[60px]`}
+                      >
+                        {item.size}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ) : (
-                <span>{displayProduct.Price} MAD</span>
+                <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+                  <p className="text-red-700 font-semibold">Product currently out of stock</p>
+                </div>
               )}
-            </div>
-            <p className="mt-3 text-gray-500 md:w-4/5">{displayProduct.Description}</p>
-            {displaySizes.length > 0 ? (
-              <div className="flex flex-col gap-2 my-6">
-                <p className="font-medium">Select Size</p>
-                <div className="flex gap-3">
-                  {displaySizes.map((item, index) => (
-                    <button
-                      onClick={() => setSize(item.size)}
-                      key={index}
-                      className={`${size === item.size ? "border-black " : ""} border px-3 py-2 bg-gray-200 rounded-sm`}
-                    >
-                      {item.size}
-                    </button>
-                  ))}
+
+              {/* Add to Cart Button */}
+              <Button 
+                onClick={() => AddToCart()} 
+                disabled={displaySizes.length <= 0} 
+                className="w-full mb-6 h-12 text-lg font-bold bg-red-500 hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                ADD TO CART
+              </Button>
+
+              <Separator className="my-6" />
+
+              {/* Features */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <BadgeCheck size={20} className="text-green-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">100% Authentic</p>
+                    <p className="text-sm text-gray-600">Verified quality & genuine brands</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <RefreshCcw size={20} className="text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Fast & Secure Shipping</p>
+                    <p className="text-sm text-gray-600">Safe and reliable delivery</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <DollarSign size={20} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">No Hidden Charges</p>
+                    <p className="text-sm text-gray-600">Transparent pricing guaranteed</p>
+                  </div>
                 </div>
               </div>
-            ) : (
-              <p className="mt-3 text-red-600">Product currently out of stock</p>
-            )}
-            <Button onClick={() => AddToCart()} disabled={displaySizes.length <= 0} className="my-3">
-              ADD TO CART
-            </Button>
-            <Separator />
-            <div className="flex flex-col gap-2 mt-5 text-sm text-gray-500">
-              <p className="flex justify-start gap-1 items-center">
-                <span>
-                  <BadgeCheck size={21} />
-                </span>
-                100% Authentic product
-              </p>
-              <p className="flex justify-start gap-2 items-center">
-                <span>
-                  <RefreshCcw size={19} />
-                </span>
-                Fast and Secure Shipping
-              </p>
-              <p className="flex justify-start gap-2 items-center">
-                <span>
-                  <DollarSign size={17} />
-                </span>
-                No Hidden Charges
-              </p>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Similar Products Section */}
       {similarProducts.length > 0 && (
-  <div className="w-full flex flex-col justify-center items-center gap-5 py-8">
-    {/* Heading */}
-    <h2 className="text-2xl font-medium tracking-wide text-gray-800 text-center">
-      SIMILAR <span className="text-red-500 font-normal">PRODUCTS</span>
-    </h2>
-
-    {/* Products Grid */}
-    <div className="w-full max-w-6xl px-4">
-      <div
-        className="grid gap-1"
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(150px, 1fr))`,
-          justifyItems: "center",
-        }}
-      >
-        {similarProducts.map((item, index) => (
-          <div key={index} className="w-full max-w-[200px]">
-            <Customer_ProductCard product={item} />
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-12">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-2">
+              SIMILAR <span className="text-red-500">PRODUCTS</span>
+            </h2>
+            <p className="text-gray-600 text-lg">You might also like</p>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
-
-      {/* Review */}
-      <div className="w-full flex flex-col items-center gap-2">
-        <h2 className="text-2xl font-medium tracking-wide text-gray-800 text-center">
-          PRODUCT <span className="text-red-500 font-normal">REVIEW</span>
-        </h2>
-        {/* Send review */}
-        <div className="w-[80%] flex flex-col gap-2">
-          <h3 className="font-semibold text-gray-700">Write your Review</h3>
-          <div className="flex">
-            <StarRating rating={rating} handleSetRating={handleSetRating} isEditable={true} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+            {similarProducts.map((item, index) => (
+              <Customer_ProductCard key={index} product={item} />
+            ))}
           </div>
-          <div className="flex gap-2">
-            <Input
-              name="comment"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className="px-3 w-[95%] border border-gray-500"
-              placeholder="Leave your comment ..."
-            />
-            <Button
-              disabled={rating === 0 || comment.trim() === ""}
-              className="rounded-full p-2"
-              onClick={() => handleCreateReview()}
-            >
-              <SendHorizonal />
-            </Button>
+        </div>
+      )}
+
+      {/* Reviews Section */}
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 py-12">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-2">
+            PRODUCT <span className="text-red-500">REVIEWS</span>
+          </h2>
+          <p className="text-gray-600 text-lg">Share your experience with others</p>
+        </div>
+
+        {/* Write Review Form */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-8 border border-gray-200">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Write your Review</h3>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700">Rating:</span>
+              <StarRating rating={rating} handleSetRating={handleSetRating} isEditable={true} />
+            </div>
+            <div className="flex gap-3">
+              <Input
+                name="comment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                placeholder="Share your thoughts about this product..."
+              />
+              <Button
+                disabled={rating === 0 || comment.trim() === ""}
+                className="rounded-xl px-6 bg-red-500 hover:bg-red-600 disabled:bg-gray-300"
+                onClick={() => handleCreateReview()}
+              >
+                <SendHorizonal className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Get review */}
-        <div className="w-[80%] mt-2 flex flex-col gap-4 mb-10">
+        {/* Reviews List */}
+        <div className="flex flex-col gap-4">
           {reviewList && reviewList.length > 0 ? (
-            reviewList.map((item, index) => <Review_Tile key={index} review={item} />)
+            reviewList.map((item, index) => (
+              <div key={index} className="bg-white rounded-xl shadow-md border border-gray-200">
+                <Review_Tile review={item} />
+              </div>
+            ))
           ) : (
-            <div className="flex flex-col items-center justify-center p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
-              <Plus className="w-16 h-16 text-gray-400" />
-              <p className="text-lg font-semibold text-gray-600">Be the first one to review the product</p>
-              <p className="text-sm text-gray-500 mt-2">Your feedback helps others make informed decisions.</p>
+            <div className="bg-white rounded-2xl shadow-lg p-12 border border-gray-200">
+              <div className="flex flex-col items-center justify-center gap-4 text-center">
+                <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
+                  <Plus className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">Be the first to review</h3>
+                <p className="text-gray-600 max-w-md">
+                  Your feedback helps others make informed decisions. Share your experience with this product!
+                </p>
+              </div>
             </div>
           )}
         </div>

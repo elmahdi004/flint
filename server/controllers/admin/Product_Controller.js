@@ -23,6 +23,14 @@ const handleAddProduct = async(req,res) =>
 
         const images = [image1,image2,image3,image4].filter((item) => item !== undefined);
 
+        // Check if Cloudinary is configured
+        if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_SECRET) {
+            return res.status(500).json({
+                success : false,
+                message : "Cloudinary configuration is missing. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your .env file"
+            })
+        }
+
         let imageURL = await Promise.all(
             images.map(async(item) => {
                 const base64EncodedFile = (item.buffer).toString('base64');
@@ -61,14 +69,24 @@ const handleAddProduct = async(req,res) =>
         console.log(e);
         if(e.code === 11000)
         {
-            res.status(404).json({
+            return res.status(404).json({
                 success : false,
                 message : "Product with the same name already exists"
             })
         }
-        res.status(500).json({
+        
+        // Check if it's a Cloudinary error
+        if(e.message && e.message.includes('api_key')) {
+            return res.status(500).json({
+                success : false,
+                message : "Cloudinary configuration error. Please check your .env file and ensure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET are set."
+            })
+        }
+        
+        return res.status(500).json({
             success : false,
-            message : "Add Product | Internal Server error"
+            message : "Add Product | Internal Server error",
+            error : e.message
         })
     }
 }

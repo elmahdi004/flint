@@ -43,22 +43,22 @@ function App() {
   },[dispatch,location.pathname]);
 
   if (isLoading) return (
-    <div className='flex justify-center items-center w-screen h-screen'>
-      <div className="flex flex-col items-center justify-center space-y-3">
-      <div className="flex flex-col items-start ">
-          <span className='font-stick-no-bills text-4xl font-bold'>FLINT
-            <span className='text-red-400 text-5xl'>.</span>
+    <div className='flex justify-center items-center w-screen h-screen bg-gradient-to-br from-gray-50 to-gray-100'>
+      <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="flex flex-col items-center">
+          <span className='font-stick-no-bills text-5xl font-bold gradient-text'>FLINT
+            <span className='text-red-500 text-6xl'>.</span>
           </span>
-      </div>
-      <LoaderCircle className='text-red-400 w-10 h-10 animate-spin' />
-      <p className='text-slate-700'>Please wait, while we prepare your style journey</p>
+        </div>
+        <LoaderCircle className='text-red-500 w-12 h-12 animate-spin' />
+        <p className='text-slate-600 font-medium'>Please wait, while we prepare your style journey</p>
       </div>
     </div>
   );
 
 
   return (
-    <div className='flex flex-col bg-white '>
+    <div className='flex flex-col bg-gray-50 min-h-screen'>
         <Routes>
 
           <Route path='/' element={<AuthValidator isAuthenticated={isAuthenticated} user={user}></AuthValidator>} />

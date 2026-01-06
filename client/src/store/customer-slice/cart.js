@@ -112,7 +112,12 @@ export const handleDeleteCartItems = createAsyncThunk('/carts/delete',async ({to
 const ShoppingCartSlice = createSlice({
     name : "shoppingCart",
     initialState,
-    reducers : {},
+    reducers : {
+        clearCart: (state) => {
+            state.cartProducts = [];
+            state.cartId = null;
+        }
+    },
     extraReducers : (builder) => {
         builder
         .addCase(handleAddtoCart.pending,(state,action) => {
@@ -120,8 +125,8 @@ const ShoppingCartSlice = createSlice({
         })
         .addCase(handleAddtoCart.fulfilled,(state,action) => {
             state.isLoading = false;
-            state.cartProducts = action.payload?.data.populatedItems;
-            state.cartId = action.payload?.data._id;
+          state.cartProducts = action.payload?.data?.populatedItems || [];
+          state.cartId = action.payload?.data?._id || state.cartId;
         })
         .addCase(handleAddtoCart.rejected,(state,action) => {
             state.isLoading = false;
@@ -131,8 +136,8 @@ const ShoppingCartSlice = createSlice({
         })
         .addCase(handleFetchCartItems.fulfilled,(state,action) => {
             state.isLoading = false;
-            state.cartProducts = action.payload?.data.populatedItems;
-            state.cartId = action.payload?.data._id;
+          state.cartProducts = action.payload?.data?.populatedItems || [];
+          state.cartId = action.payload?.data?._id || state.cartId;
         })
         .addCase(handleFetchCartItems.rejected,(state,action) => {
             state.isLoading = false;
@@ -143,8 +148,8 @@ const ShoppingCartSlice = createSlice({
         })
         .addCase(handleUpdateCartItems.fulfilled,(state,action) => {
             state.isLoading = false;
-            state.cartProducts = action.payload?.data?.populatedItems === undefined ? state.cartProducts : action.payload.data.populatedItems;
-            state.cartId = action.payload?.data?._id === undefined ? state.cartId : action.payload.data._id;
+            state.cartProducts = action.payload?.data?.populatedItems ?? state.cartProducts;
+            state.cartId = action.payload?.data?._id ?? state.cartId;
         })
         .addCase(handleUpdateCartItems.rejected,(state,action) => {
             state.isLoading = false;
@@ -154,8 +159,8 @@ const ShoppingCartSlice = createSlice({
         })
         .addCase(handleDeleteCartItems.fulfilled,(state,action) => {
             state.isLoading = false;
-            state.cartProducts = action.payload?.data.populatedItems;
-            state.cartId = action.payload?.data._id;
+          state.cartProducts = action.payload?.data?.populatedItems || [];
+          state.cartId = action.payload?.data?._id || state.cartId;
         })
         .addCase(handleDeleteCartItems.rejected,(state,action) => {
             state.isLoading = false;
@@ -163,4 +168,5 @@ const ShoppingCartSlice = createSlice({
     }
 });
 
+export const { clearCart } = ShoppingCartSlice.actions;
 export default ShoppingCartSlice.reducer;

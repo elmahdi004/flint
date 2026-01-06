@@ -54,31 +54,37 @@ function Login() {
   };
 
   return (
-    <div className='mx-auto w-full max-w-md space-y-1'>
-      <h1 className='text-3xl font-bold tracking-tight text-foreground-primary'>
-        Explore{' '}
-        <span className='font-stick-no-bills text-4xl font-bold'>
-          FLINT
-          <span className='text-red-400 text-5xl'>.</span>
-        </span>
-      </h1>
-      <h1 className='text-1xl font-semibold text-slate-600'>
-        Login to your account and explore Flint
-      </h1>
-      <br />
-      <Form
-        FormTemplate={LoginFormTemplate}
-        FormData={formData}
-        setFormData={setFormData}
-        onSubmit={onSubmit}
-        EventName='Login'
-      ></Form>
-      <h1 className='text-center'>
-        New to Flint?
-        <NavLink to='/auth/signup' className='text-violet-700 font-semibold'>
-          &nbsp;Sign-Up
-        </NavLink>
-      </h1>
+    <div className='w-full space-y-8'>
+      <div className='text-center space-y-2'>
+        <h1 className='text-4xl md:text-5xl font-bold tracking-tight text-gray-900'>
+          Welcome Back
+        </h1>
+        <p className='text-lg text-gray-600'>
+          Login to your account and explore{' '}
+          <span className='font-stick-no-bills text-2xl font-bold gradient-text'>
+            FLINT<span className='text-red-500 text-3xl'>.</span>
+          </span>
+        </p>
+      </div>
+      
+      <div className='bg-white rounded-2xl shadow-xl border border-gray-200 p-8'>
+        <Form
+          FormTemplate={LoginFormTemplate}
+          FormData={formData}
+          setFormData={setFormData}
+          onSubmit={onSubmit}
+          EventName='Login'
+        />
+      </div>
+      
+      <div className='text-center'>
+        <p className='text-gray-600'>
+          New to Flint?{' '}
+          <NavLink to='/auth/signup' className='text-red-500 font-semibold hover:text-red-600 transition-colors'>
+            Sign Up
+          </NavLink>
+        </p>
+      </div>
     </div>
   );
 }
