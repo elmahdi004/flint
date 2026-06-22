@@ -16,4 +16,4 @@ trivy_scan:
     paths:
       - trivy-report.txt
     when: always
-# new version
+# new version v1
